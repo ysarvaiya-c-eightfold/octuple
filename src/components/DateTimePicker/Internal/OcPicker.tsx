@@ -13,6 +13,7 @@ import {
   OcPickerTimeProps,
 } from './OcPicker.types';
 import { mergeClasses } from '../../../shared/utilities';
+import { FocusTrap } from '../../../shared/FocusTrap';
 import { useMergedState } from '../../../hooks/useMergedState';
 import OcPickerPartial from './OcPickerPartial';
 import OcPickerTrigger from './OcPickerTrigger';
@@ -102,6 +103,7 @@ function InnerPicker<DateType>(props: OcPickerProps<DateType>) {
     todayText,
     use12Hours,
     value,
+    trapFocus = false,
   } = props as MergedOcPickerProps<DateType>;
 
   const inputRef: React.MutableRefObject<HTMLInputElement> =
@@ -230,7 +232,8 @@ function InnerPicker<DateType>(props: OcPickerProps<DateType>) {
     onBlur?.(e);
   };
 
-  const [inputProps, { focused, typing }] = usePickerInput({
+  const [inputProps, { focused, typing, trap, setTrap }] = usePickerInput({
+    trapFocus,
     blurToCancel: needConfirmButton,
     open: mergedOpen,
     value: text,
@@ -367,7 +370,26 @@ function InnerPicker<DateType>(props: OcPickerProps<DateType>) {
     partialNode = partialRender(partialNode);
   }
 
-  const partial: JSX.Element = (
+  const partial: JSX.Element = trapFocus ? (
+    <FocusTrap
+      data-testid="picker-dialog"
+      role="dialog"
+      aria-modal="true"
+      trap={trap}
+      className={styles.pickerPartialContainer}
+      onMouseDown={(e) => {
+        e.preventDefault();
+      }}
+      onKeyDown={(event) => {
+        if (event.key === 'Escape') {
+          triggerOpen(false);
+          setTrap(false);
+        }
+      }}
+    >
+      {partialNode}
+    </FocusTrap>
+  ) : (
     <div
       className={styles.pickerPartialContainer}
       onMouseDown={(e) => {
@@ -454,6 +476,9 @@ function InnerPicker<DateType>(props: OcPickerProps<DateType>) {
       // triggerChange will also update selected values
       triggerChange(date);
       triggerOpen(false);
+      if (trapFocus) {
+        setTrap(false);
+      }
     }
   };
 
@@ -467,6 +492,7 @@ function InnerPicker<DateType>(props: OcPickerProps<DateType>) {
         open: mergedOpen,
         onDateMouseEnter: onEnter,
         onDateMouseLeave: onLeave,
+        trapFocus: trapFocus && trap,
       }}
     >
       <OcPickerTrigger

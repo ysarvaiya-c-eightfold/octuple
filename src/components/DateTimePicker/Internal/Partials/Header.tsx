@@ -6,6 +6,7 @@ import { IconName } from '../../../Icon';
 import { Size } from '../../../ConfigProvider';
 import { DatePickerSize } from '../OcPicker.types';
 import { useCanvasDirection } from '../../../../hooks/useCanvasDirection';
+import { handlePickerKeyDown } from '../Utils/uiUtil';
 
 import styles from '../ocpicker.module.scss';
 
@@ -43,12 +44,14 @@ export const Header = ({
     <div className={styles.pickerHeader}>
       {onSuperPrev && (
         <SystemUIButton
+          data-testid="picker-header-super-prev-btn"
           classNames={'picker-header-super-prev-btn'}
           iconProps={{
             path: superPrevIcon,
             rotate: htmlDir === 'rtl' ? 180 : 0,
           }}
           onClick={onSuperPrev}
+          onKeyDown={handlePickerKeyDown(onSuperPrev)}
           shape={ButtonShape.Round}
           size={datePickerSizeToButtonSizeMap.get(size)}
           style={hidePrevBtn ? HIDDEN_STYLE : {}}
@@ -56,12 +59,14 @@ export const Header = ({
       )}
       {onPrev && (
         <SystemUIButton
+          data-testid={'picker-header-prev-btn'}
           classNames={'picker-header-prev-btn'}
           iconProps={{
             path: prevIcon,
             rotate: htmlDir === 'rtl' ? 180 : 0,
           }}
           onClick={onPrev}
+          onKeyDown={handlePickerKeyDown(onPrev)}
           shape={ButtonShape.Round}
           size={datePickerSizeToButtonSizeMap.get(size)}
           style={hidePrevBtn ? HIDDEN_STYLE : {}}
@@ -70,12 +75,14 @@ export const Header = ({
       <div className={styles.pickerHeaderView}>{children}</div>
       {onNext && (
         <SystemUIButton
+          data-testid={'picker-header-next-btn'}
           classNames={'picker-header-next-btn'}
           iconProps={{
             path: nextIcon,
             rotate: htmlDir === 'rtl' ? 180 : 0,
           }}
           onClick={onNext}
+          onKeyDown={handlePickerKeyDown(onNext)}
           shape={ButtonShape.Round}
           size={datePickerSizeToButtonSizeMap.get(size)}
           style={hideNextBtn ? HIDDEN_STYLE : {}}
@@ -83,12 +90,14 @@ export const Header = ({
       )}
       {onSuperNext && (
         <SystemUIButton
+          data-testid="picker-header-super-next-btn"
           classNames={'picker-header-super-next-btn'}
           iconProps={{
             path: superNextIcon,
             rotate: htmlDir === 'rtl' ? 180 : 0,
           }}
           onClick={onSuperNext}
+          onKeyDown={handlePickerKeyDown(onSuperNext)}
           shape={ButtonShape.Round}
           size={datePickerSizeToButtonSizeMap.get(size)}
           style={hideNextBtn ? HIDDEN_STYLE : {}}
